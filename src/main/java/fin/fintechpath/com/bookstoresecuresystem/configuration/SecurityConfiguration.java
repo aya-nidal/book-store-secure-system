@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -32,13 +33,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().
+//                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
                 authorizeRequests()
                 .requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
                 .permitAll()
                 .antMatchers("/book/books").permitAll()
-                .antMatchers("/store/stores","/store/stores/{id}").hasAnyRole("StoreAdmin", "NormalUser")
+//                .antMatchers("/store/stores", "/store/stores/{id}").hasAnyRole("StoreAdmin", "NormalUser")
+                .antMatchers("/store/stores", "/store/stores/{id}").hasAnyAuthority("StoreAdmin", "NormalUser")
                 .antMatchers("/store/stores/{id}/books").hasRole("StoreAdmin")
-                .antMatchers( "/login").permitAll()
+                .antMatchers("/login").permitAll()
                 .and().formLogin()
                 .and().logout().logoutSuccessUrl("/login");
 
@@ -47,7 +50,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    DaoAuthenticationProvider authenticationProvider(){
+    DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setUserDetailsService(userPrincipalDetailsService);

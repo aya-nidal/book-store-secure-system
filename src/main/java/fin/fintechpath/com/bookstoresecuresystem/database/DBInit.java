@@ -38,8 +38,8 @@ public class DBInit implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        createAuthorities("ROLE_StoreAdmin");
-        createAuthorities("ROLE_NormalUser");
+        createAuthorities("StoreAdmin");
+        createAuthorities("NormalUser");
 
         createAdminUser("aya", passwordEncoder.encode("aya123"), "ayanidal56@gmail.com", 1);
         createAdminUser("bayan", passwordEncoder.encode("bayan123"), "bayan_alqasem_96@gmail.com", 1);
